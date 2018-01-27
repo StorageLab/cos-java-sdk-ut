@@ -35,7 +35,7 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
     @Test
     public void testCreateDeleteBucketPublicRead() throws Exception {
         try {
-            String bucketName = String.format("publicreadwritebucket%d", System.currentTimeMillis() / 1000);
+            String bucketName = String.format("pubr522%d", System.currentTimeMillis() / 1000);
             CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
             createBucketRequest.setCannedAcl(CannedAccessControlList.PublicRead);
             Bucket bucket = cosclient.createBucket(createBucketRequest);
@@ -60,7 +60,7 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
     @Test
     public void testCreateDeleteBucketPublicReadWrite() throws Exception {
         try {
-            String bucketName = String.format("publicbucket%d", System.currentTimeMillis() / 1000);
+            String bucketName = String.format("pubrw522%d", System.currentTimeMillis() / 1000);
             CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
             createBucketRequest.setCannedAcl(CannedAccessControlList.PublicReadWrite);
             AccessControlList accessControlList = new AccessControlList();
@@ -89,7 +89,7 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
     @Test
     public void testCreateDeleteBucketPrivate() throws Exception {
         try {
-            String bucketName = String.format("privatebucket%d", System.currentTimeMillis() / 1000);
+            String bucketName = String.format("pri522%d", System.currentTimeMillis() / 1000);
             CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
             createBucketRequest.setCannedAcl(CannedAccessControlList.Private);
             Bucket bucket = cosclient.createBucket(createBucketRequest);
