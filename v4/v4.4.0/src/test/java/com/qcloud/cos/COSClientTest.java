@@ -1,4 +1,4 @@
-package com.qcloud.cos_v4_ut;
+package com.qcloud.cos;
 
 import static org.junit.Assert.*;
 
@@ -227,7 +227,9 @@ public class COSClientTest {
     private void getFile(String key, File localDownFile, long expectedLength) {
         GetFileLocalRequest getFileLocalRequest =
                 new GetFileLocalRequest(bucket, key, localDownFile.getAbsolutePath());
+        getFileLocalRequest.setUseCDN(false);
         String getFileRet = cosclient.getFileLocal(getFileLocalRequest);
+        System.out.println(getFileRet);
         JSONObject getFileRetJson = new JSONObject(getFileRet);
         assertEquals(0, getFileRetJson.getInt("code"));
         assertEquals(expectedLength, localDownFile.length());
