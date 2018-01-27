@@ -183,7 +183,6 @@ public class COSClientTest {
         uploadFileRequest.setEnableShaDigest(enableSha);
 
         String uploadRet = cosclient.uploadFile(uploadFileRequest);
-        System.out.println(uploadRet);
         JSONObject uploadRetJson = new JSONObject(uploadRet);
         assertEquals(0, uploadRetJson.getInt("code"));
         assertTrue(uploadRetJson.has("request_id"));
@@ -228,6 +227,7 @@ public class COSClientTest {
     private void getFile(String key, File localDownFile, long expectedLength) {
         GetFileLocalRequest getFileLocalRequest =
                 new GetFileLocalRequest(bucket, key, localDownFile.getAbsolutePath());
+        getFileLocalRequest.setUseCDN(false);
         String getFileRet = cosclient.getFileLocal(getFileLocalRequest);
         JSONObject getFileRetJson = new JSONObject(getFileRet);
         assertEquals(0, getFileRetJson.getInt("code"));
@@ -320,50 +320,82 @@ public class COSClientTest {
     }
 
     @Test
-    public void testPutGetDelFile_size_0() throws IOException {
+    public void testPutGetDelFile_size_0_withsha() throws IOException {
         PutGetDelFileLocal(0, true);
+    }
+
+    @Test
+    public void testPutGetDelFile_size_0_withoutsha() throws IOException {
         PutGetDelFileLocal(0, false);
     }
 
     @Test
-    public void testPutGetDelFile_size_1k() throws IOException {
+    public void testPutGetDelFile_size_1k_withsha() throws IOException {
         PutGetDelFileLocal(1024, true);
+    }
+
+    @Test
+    public void testPutGetDelFile_size_1k_withoutsha() throws IOException {
         PutGetDelFileLocal(1024, false);
     }
 
     @Test
-    public void testPutGetDelFile_size_1M() throws IOException {
-        PutGetDelFileLocal(1 * 1024 * 1024, true);
+    public void testPutGetDelFile_size_1M_withsha() throws IOException {
         PutGetDelFileLocal(1 * 1024 * 1024, true);
     }
 
     @Test
-    public void testPutGetDelFile_size_10M() throws IOException {
+    public void testPutGetDelFile_size_1M_withoutsha() throws IOException {
+        PutGetDelFileLocal(1 * 1024 * 1024, false);
+    }
+
+    @Test
+    public void testPutGetDelFile_size_10M_withsha() throws IOException {
         PutGetDelFileLocal(10 * 1024 * 1024, true);
+    }
+
+    @Test
+    public void testPutGetDelFile_size_10M_withoutsha() throws IOException {
         PutGetDelFileLocal(10 * 1024 * 1024, false);
     }
 
     @Test
-    public void testPutGetDelFile_size_100M() throws IOException {
+    public void testPutGetDelFile_size_100M_withsha() throws IOException {
         PutGetDelFileLocal(100 * 1024 * 1024, true);
+    }
+
+    @Test
+    public void testPutGetDelFile_size_100M_withoutsha() throws IOException {
         PutGetDelFileLocal(100 * 1024 * 1024, false);
     }
 
     @Test
-    public void testPutGetDelContent_size_0() throws IOException {
+    public void testPutGetDelContent_size_0_withsha() throws IOException {
         PutGetDelFileFromContent(0, true);
+    }
+
+    @Test
+    public void testPutGetDelContent_size_0_withoutsha() throws IOException {
         PutGetDelFileFromContent(0, false);
     }
 
     @Test
-    public void testPutGetDelContent_size_1m() throws IOException {
+    public void testPutGetDelContent_size_1m_withsha() throws IOException {
         PutGetDelFileFromContent(1 * 1024 * 1024, true);
+    }
+
+    @Test
+    public void testPutGetDelContent_size_1m_withoutsha() throws IOException {
         PutGetDelFileFromContent(10 * 1024 * 1024, false);
     }
 
     @Test
-    public void testPutGetDelContent_size_10m() throws IOException {
+    public void testPutGetDelContent_size_10m_withsha() throws IOException {
         PutGetDelFileFromContent(10 * 1024 * 1024, true);
+    }
+
+    @Test
+    public void testPutGetDelContent_size_10m_withoutsha() throws IOException {
         PutGetDelFileFromContent(10 * 1024 * 1024, false);
     }
 
