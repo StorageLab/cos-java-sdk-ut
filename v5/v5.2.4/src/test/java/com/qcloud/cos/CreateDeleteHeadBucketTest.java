@@ -7,7 +7,9 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
+import com.qcloud.cos.exception.CosServiceException;
 import com.qcloud.cos.model.AccessControlList;
 import com.qcloud.cos.model.Bucket;
 import com.qcloud.cos.model.BucketVersioningConfiguration;
@@ -35,22 +37,27 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
         if (!judgeUserInfoValid()) {
             return;
         }
-        String bucketName = "publicreadbucket-1251668577";
-        CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
-        createBucketRequest.setCannedAcl(CannedAccessControlList.PublicRead);
-        Bucket bucket = cosclient.createBucket(createBucketRequest);
-        assertEquals(bucketName, bucket.getName());
+        try {
+            String bucketName = String.format("publicreadwritebucket-%d-1251668577", System.currentTimeMillis() / 1000);
+            CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
+            createBucketRequest.setCannedAcl(CannedAccessControlList.PublicRead);
+            Bucket bucket = cosclient.createBucket(createBucketRequest);
+            assertEquals(bucketName, bucket.getName());
 
-        cosclient.headBucket(new HeadBucketRequest(bucketName));
-        
-        BucketVersioningConfiguration bucketVersioningConfiguration =
-                cosclient.getBucketVersioningConfiguration(bucketName);
-        assertEquals(BucketVersioningConfiguration.OFF, bucketVersioningConfiguration.getStatus());
+            cosclient.headBucket(new HeadBucketRequest(bucketName));
 
-        cosclient.deleteBucket(bucketName);
-        // 删除bucket后, 由于server端有缓存 需要稍后查询, 这里sleep 5 秒
-        Thread.sleep(5000L);
-        assertFalse(cosclient.doesBucketExist(bucketName));
+            BucketVersioningConfiguration bucketVersioningConfiguration =
+                    cosclient.getBucketVersioningConfiguration(bucketName);
+            assertEquals(BucketVersioningConfiguration.OFF,
+                    bucketVersioningConfiguration.getStatus());
+
+            cosclient.deleteBucket(bucketName);
+            // 删除bucket后, 由于server端有缓存 需要稍后查询, 这里sleep 5 秒
+            Thread.sleep(5000L);
+            assertFalse(cosclient.doesBucketExist(bucketName));
+        } catch (CosServiceException cse) {
+            fail(cse.toString());
+        }
     }
 
     @Test
@@ -58,26 +65,31 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
         if (!judgeUserInfoValid()) {
             return;
         }
-        String bucketName = "publicreadwritebucket-1251668577";
-        CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
-        createBucketRequest.setCannedAcl(CannedAccessControlList.PublicReadWrite);
-        AccessControlList accessControlList = new AccessControlList();
-        Grantee grantee = new UinGrantee("730123456");
-        accessControlList.grantPermission(grantee, Permission.Write);
-        createBucketRequest.setAccessControlList(accessControlList);
-        Bucket bucket = cosclient.createBucket(createBucketRequest);
-        assertEquals(bucketName, bucket.getName());
-        
-        assertTrue(cosclient.doesBucketExist(bucketName));
+        try {
+            String bucketName = String.format("publicbucket-%d-1251668577", System.currentTimeMillis() / 1000);
+            CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
+            createBucketRequest.setCannedAcl(CannedAccessControlList.PublicReadWrite);
+            AccessControlList accessControlList = new AccessControlList();
+            Grantee grantee = new UinGrantee("730123456");
+            accessControlList.grantPermission(grantee, Permission.Write);
+            createBucketRequest.setAccessControlList(accessControlList);
+            Bucket bucket = cosclient.createBucket(createBucketRequest);
+            assertEquals(bucketName, bucket.getName());
 
-        BucketVersioningConfiguration bucketVersioningConfiguration =
-                cosclient.getBucketVersioningConfiguration(bucketName);
-        assertEquals(BucketVersioningConfiguration.OFF, bucketVersioningConfiguration.getStatus());
+            assertTrue(cosclient.doesBucketExist(bucketName));
 
-        cosclient.deleteBucket(bucketName);
-        // 删除bucket后, 由于server端有缓存 需要稍后查询, 这里sleep 5 秒
-        Thread.sleep(5000L);
-        assertFalse(cosclient.doesBucketExist(bucketName));
+            BucketVersioningConfiguration bucketVersioningConfiguration =
+                    cosclient.getBucketVersioningConfiguration(bucketName);
+            assertEquals(BucketVersioningConfiguration.OFF,
+                    bucketVersioningConfiguration.getStatus());
+
+            cosclient.deleteBucket(bucketName);
+            // 删除bucket后, 由于server端有缓存 需要稍后查询, 这里sleep 5 秒
+            Thread.sleep(5000L);
+            assertFalse(cosclient.doesBucketExist(bucketName));
+        } catch (CosServiceException cse) {
+            fail(cse.toString());
+        }
     }
 
     @Test
@@ -85,22 +97,27 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
         if (!judgeUserInfoValid()) {
             return;
         }
-        String bucketName = "privatebucket-1251668577";
-        CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
-        createBucketRequest.setCannedAcl(CannedAccessControlList.Private);
-        Bucket bucket = cosclient.createBucket(createBucketRequest);
-        assertEquals(bucketName, bucket.getName());
-        
-        assertTrue(cosclient.doesBucketExist(bucketName));
+        try {
+            String bucketName = String.format("privatebucket-%d-1251668577", System.currentTimeMillis() / 1000);
+            CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
+            createBucketRequest.setCannedAcl(CannedAccessControlList.Private);
+            Bucket bucket = cosclient.createBucket(createBucketRequest);
+            assertEquals(bucketName, bucket.getName());
 
-        BucketVersioningConfiguration bucketVersioningConfiguration =
-                cosclient.getBucketVersioningConfiguration(bucketName);
-        assertEquals(BucketVersioningConfiguration.OFF, bucketVersioningConfiguration.getStatus());
+            assertTrue(cosclient.doesBucketExist(bucketName));
 
-        cosclient.deleteBucket(bucketName);
-        // 删除bucket后, 由于server端有缓存 需要稍后查询, 这里sleep 5 秒
-        Thread.sleep(5000L);
-        assertFalse(cosclient.doesBucketExist(bucketName));
+            BucketVersioningConfiguration bucketVersioningConfiguration =
+                    cosclient.getBucketVersioningConfiguration(bucketName);
+            assertEquals(BucketVersioningConfiguration.OFF,
+                    bucketVersioningConfiguration.getStatus());
+
+            cosclient.deleteBucket(bucketName);
+            // 删除bucket后, 由于server端有缓存 需要稍后查询, 这里sleep 5 秒
+            Thread.sleep(5000L);
+            assertFalse(cosclient.doesBucketExist(bucketName));
+        } catch (CosServiceException cse) {
+            fail(cse.toString());
+        }
     }
 
 }
