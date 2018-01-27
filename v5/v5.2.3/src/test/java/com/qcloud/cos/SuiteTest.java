@@ -8,7 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({BucketVersioningTest.class, BatchDeleteTest.class, BucketReplicationTest.class,
         CORSTest.class, CreateDeleteHeadBucketTest.class, GeneratePresignedUrlTest.class,
         GetBucketLocationTest.class, GetServiceTest.class, ListObjectTest.class, MultipartUploadTest.class,
-        PutGetDelTest.class, PutGetLifeCycleConfigTest.class, PutObjectCopyTest.class})
-    /** Ignore AclTest.class **/
+        PutGetDelTest.class, PutObjectCopyTest.class})
+    /** Ignore AclTest.class, PutGetLifeCycleConfigTest.class **/
 public class SuiteTest {
 }
