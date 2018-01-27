@@ -72,8 +72,7 @@ public class PutGetLifeCycleConfigTest extends AbstractCOSClientTest {
         cosclient.deleteBucketLifecycleConfiguration(bucket);
     }
 
-    // TODO CGI这里对时间戳的校验格式有误
-    @Ignore
+    @Test
     public void testPutGetDelExpirationDateLifeCycle() throws Exception {
         List<Rule> rules = new ArrayList<>();
         Rule rule = new Rule();
@@ -87,7 +86,7 @@ public class PutGetLifeCycleConfigTest extends AbstractCOSClientTest {
         testPutGetDelRules(rules);
     }
 
-    @Ignore
+    @Test
     public void testPutGetDelLifeCycleForNormalBucket() {
         List<Rule> rules = new ArrayList<>();
 
@@ -130,7 +129,7 @@ public class PutGetLifeCycleConfigTest extends AbstractCOSClientTest {
         testPutGetDelRules(rules);
     }
 
-    @Ignore
+    @Test
     public void testPutGetDelLifeCycleForBucketWithVersions() {
         BucketVersioningConfiguration bucketVersionConfig =
                 new BucketVersioningConfiguration(BucketVersioningConfiguration.ENABLED);
