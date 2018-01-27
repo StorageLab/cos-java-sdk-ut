@@ -34,9 +34,6 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
 
     @Test
     public void testCreateDeleteBucketPublicRead() throws Exception {
-        if (!judgeUserInfoValid()) {
-            return;
-        }
         try {
             String bucketName = String.format("publicreadwritebucket-%d-1251668577", System.currentTimeMillis() / 1000);
             CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
@@ -62,9 +59,6 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
 
     @Test
     public void testCreateDeleteBucketPublicReadWrite() throws Exception {
-        if (!judgeUserInfoValid()) {
-            return;
-        }
         try {
             String bucketName = String.format("publicbucket-%d-1251668577", System.currentTimeMillis() / 1000);
             CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
@@ -94,9 +88,6 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
 
     @Test
     public void testCreateDeleteBucketPrivate() throws Exception {
-        if (!judgeUserInfoValid()) {
-            return;
-        }
         try {
             String bucketName = String.format("privatebucket-%d-1251668577", System.currentTimeMillis() / 1000);
             CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
