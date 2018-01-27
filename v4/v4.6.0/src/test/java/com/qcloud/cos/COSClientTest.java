@@ -229,6 +229,7 @@ public class COSClientTest {
                 new GetFileLocalRequest(bucket, key, localDownFile.getAbsolutePath());
         getFileLocalRequest.setUseCDN(false);
         String getFileRet = cosclient.getFileLocal(getFileLocalRequest);
+        System.out.println(getFileRet);
         JSONObject getFileRetJson = new JSONObject(getFileRet);
         assertEquals(0, getFileRetJson.getInt("code"));
         assertEquals(expectedLength, localDownFile.length());
