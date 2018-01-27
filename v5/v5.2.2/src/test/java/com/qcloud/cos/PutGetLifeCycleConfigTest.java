@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.qcloud.cos.model.BucketLifecycleConfiguration;
 import com.qcloud.cos.model.DeleteBucketLifecycleConfigurationRequest;
@@ -137,6 +138,11 @@ public class PutGetLifeCycleConfigTest extends AbstractCOSClientTest {
                 new SetBucketVersioningConfigurationRequest(bucket, bucketVersionConfig);
         cosclient.setBucketVersioningConfiguration(setBucketVersionReq);
 
+        try {
+            Thread.sleep(10000L);
+        } catch (InterruptedException e) {
+            fail(e.toString());
+        }
         List<Rule> rules = new ArrayList<>();
 
         Rule standardIaRule = new Rule();
@@ -178,6 +184,11 @@ public class PutGetLifeCycleConfigTest extends AbstractCOSClientTest {
         SetBucketVersioningConfigurationRequest closeBucketVersionReq =
                 new SetBucketVersioningConfigurationRequest(bucket, bucketVersionConfig);
         cosclient.setBucketVersioningConfiguration(closeBucketVersionReq);
+        try {
+            Thread.sleep(10000L);
+        } catch (InterruptedException e) {
+            fail(e.toString());
+        }
     }
 
 }
