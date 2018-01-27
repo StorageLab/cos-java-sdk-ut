@@ -200,7 +200,7 @@ public class PutGetDelTest extends AbstractCOSClientTest {
     }
 
 
-    @Test
+    @Ignore
     public void testPutGetDelHttps() throws IOException {
         if (!judgeUserInfoValid()) {
             return;

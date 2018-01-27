@@ -5,11 +5,10 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({BucketVersioningTest.class, AclTest.class, BatchDeleteTest.class, BucketReplicationTest.class})
-    /*
+@SuiteClasses({BucketVersioningTest.class, BatchDeleteTest.class, BucketReplicationTest.class,
         CORSTest.class, CreateDeleteHeadBucketTest.class, GeneratePresignedUrlTest.class,
         GetBucketLocationTest.class, GetServiceTest.class, ListObjectTest.class, MultipartUploadTest.class,
         PutGetDelTest.class, PutGetLifeCycleConfigTest.class, PutObjectCopyTest.class})
-        */
+    /** Ignore AclTest.class **/
 public class SuiteTest {
 }

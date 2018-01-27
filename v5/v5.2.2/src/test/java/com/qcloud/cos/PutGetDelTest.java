@@ -181,7 +181,7 @@ public class PutGetDelTest extends AbstractCOSClientTest {
     }
 
 
-    @Test
+    @Ignore
     public void testPutGetDelHttps() throws IOException {
         clientConfig.setHttpProtocol(HttpProtocol.https);
         testPutGetDelObjectDiffSize(1L);

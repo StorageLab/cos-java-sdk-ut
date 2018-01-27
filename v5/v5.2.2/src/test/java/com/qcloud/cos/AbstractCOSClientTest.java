@@ -125,8 +125,8 @@ public class AbstractCOSClientTest {
         acl.grantPermission(uinGrantee, Permission.Read);
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, key, localFile);
         putObjectRequest.setStorageClass(StorageClass.Standard_IA);
-        putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
-        putObjectRequest.setAccessControlList(acl);
+        // putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
+        // putObjectRequest.setAccessControlList(acl);
 
         PutObjectResult putObjectResult = cosclient.putObject(putObjectRequest);
         String etag = putObjectResult.getETag();
