@@ -1,4 +1,4 @@
-package com.qcloud.cos_v4_ut;
+package com.qcloud.cos;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
