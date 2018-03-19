@@ -55,7 +55,7 @@ public class BatchDeleteTest extends AbstractCOSClientTest {
         long deleteFileCount = 30;
         for (long fileIndex = 0; fileIndex < deleteFileCount; ++fileIndex) {
             File localFile = buildTestFile(fileIndex * 1024);
-            String key = "/ut/" + localFile.getName();
+            String key = "ut/" + localFile.getName();
             PutObjectResult putObjectResult = putObjectFromLocalFile(localFile, key);
             keyList.add(new KeyVersion(key, putObjectResult.getVersionId()));
         }
@@ -83,11 +83,11 @@ public class BatchDeleteTest extends AbstractCOSClientTest {
         long deleteFileCount = 5;
         for (long fileIndex = 0; fileIndex < deleteFileCount; ++fileIndex) {
             File localFile = buildTestFile(fileIndex * 1024);
-            String key = "/ut/" + localFile.getName();
+            String key = "ut/" + localFile.getName();
             PutObjectResult putObjectResult = putObjectFromLocalFile(localFile, key);
             keyList.add(new KeyVersion(key, putObjectResult.getVersionId()));
         }
-        keyList.add(new KeyVersion("/ut/not_exist_key.txt"));
+        keyList.add(new KeyVersion("ut/not_exist_key.txt"));
         deleteObjectsRequest.setKeys(keyList);
 
         try {

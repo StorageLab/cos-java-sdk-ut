@@ -46,7 +46,7 @@ public class GeneratePresignedUrlTest extends AbstractCOSClientTest {
         }
         long localFileLen = 1024;
         File localFile = buildTestFile(1024);
-        String key = "/ut/" + localFile.getName();
+        String key = "ut/" + localFile.getName();
 
         putObjectFromLocalFile(localFile, key);
 

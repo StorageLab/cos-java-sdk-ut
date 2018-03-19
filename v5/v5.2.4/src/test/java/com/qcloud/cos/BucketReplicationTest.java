@@ -34,11 +34,6 @@ public class BucketReplicationTest extends AbstractCOSClientTest {
                 new BucketVersioningConfiguration(BucketVersioningConfiguration.ENABLED);
         cosclient.setBucketVersioningConfiguration(
                 new SetBucketVersioningConfigurationRequest(bucket, bucketVersioningEnabled));
-        try {
-            Thread.sleep(10000L);
-        } catch (InterruptedException e) {
-            fail(e.toString());
-        }
 
         ReplicationRule replicationRule = new ReplicationRule();
         String prefix = "copy1_folder/";
@@ -61,7 +56,7 @@ public class BucketReplicationTest extends AbstractCOSClientTest {
 
         // replication设置后, 立刻获取会需要一段时间
         try {
-            Thread.sleep(10000L);
+            Thread.sleep(3000L);
         } catch (InterruptedException e) {
             fail(e.toString());
         }

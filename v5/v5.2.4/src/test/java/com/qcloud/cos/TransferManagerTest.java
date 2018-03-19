@@ -17,6 +17,7 @@ import com.qcloud.cos.exception.CosClientException;
 import com.qcloud.cos.exception.CosServiceException;
 import com.qcloud.cos.model.CopyObjectRequest;
 import com.qcloud.cos.model.GetObjectRequest;
+import com.qcloud.cos.model.ObjectMetadata;
 import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.UploadResult;
 import com.qcloud.cos.region.Region;
@@ -50,7 +51,7 @@ public class TransferManagerTest extends AbstractCOSClientTest {
 
 
     @Test
-    public void testTransferManagerUploadDownSmallFile()
+    public void testTransferManagerUploadDownCopySmallFile()
             throws IOException, CosServiceException, CosClientException, InterruptedException {
         if (!judgeUserInfoValid()) {
             return;
@@ -58,7 +59,8 @@ public class TransferManagerTest extends AbstractCOSClientTest {
         TransferManager transferManager = new TransferManager(cosclient);
         File localFile = buildTestFile(1024 * 1024 * 2L);
         File downFile = new File(localFile.getAbsolutePath() + ".down");
-        String key = "/ut/" + localFile.getName();
+        String key = "ut/" + localFile.getName();
+        String destKey = key + ".copy";
         try {
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, key, localFile);
             Upload upload = transferManager.upload(putObjectRequest);
@@ -71,9 +73,16 @@ public class TransferManagerTest extends AbstractCOSClientTest {
             download.waitForCompletion();
             // check file
             assertEquals(Md5Utils.md5Hex(localFile), Md5Utils.md5Hex(downFile));
+
+            CopyObjectRequest copyObjectRequest =
+                    new CopyObjectRequest(bucket, key, bucket, destKey);
+            Copy copy = transferManager.copy(copyObjectRequest, cosclient, null);
+            copy.waitForCompletion();
         } finally {
             // clear object
             clearObject(key);
+            // clear dest object
+            clearObject(destKey);
             // delete smallfile
             if (localFile.exists()) {
                 assertTrue(localFile.delete());
@@ -94,9 +103,13 @@ public class TransferManagerTest extends AbstractCOSClientTest {
         TransferManager transferManager = new TransferManager(cosclient);
         File localFile = buildTestFile(1024 * 1024 * 10L);
         File downFile = new File(localFile.getAbsolutePath() + ".down");
-        String key = "/ut/" + localFile.getName();
+        String key = "ut/" + localFile.getName();
+        String destKey = key + ".copy";
         try {
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, key, localFile);
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setServerSideEncryption("AES256");
+            putObjectRequest.setMetadata(objectMetadata);
             Upload upload = transferManager.upload(putObjectRequest);
             UploadResult uploadResult = upload.waitForUploadResult();
             assertTrue(uploadResult.getETag().contains("-"));
@@ -105,9 +118,16 @@ public class TransferManagerTest extends AbstractCOSClientTest {
             download.waitForCompletion();
             // check file
             assertEquals(Md5Utils.md5Hex(localFile), Md5Utils.md5Hex(downFile));
+
+            CopyObjectRequest copyObjectRequest =
+                    new CopyObjectRequest(bucket, key, bucket, destKey);
+            Copy copy = transferManager.copy(copyObjectRequest, cosclient, null);
+            copy.waitForCompletion();
         } finally {
             // delete file on cos
             clearObject(key);
+            // delete file on cos
+            clearObject(destKey);
             if (localFile.exists()) {
                 assertTrue(localFile.delete());
             }
@@ -123,7 +143,7 @@ public class TransferManagerTest extends AbstractCOSClientTest {
         if (!judgeUserInfoValid()) {
             return;
         }
-        String folderPrefix = "/ut_uploaddir/";
+        String folderPrefix = "ut_uploaddir/";
         File localFile1 = buildTestFile(1L);
         File localFile2 = buildTestFile(1024L);
         String key1 = folderPrefix + localFile1.getName();
@@ -152,7 +172,7 @@ public class TransferManagerTest extends AbstractCOSClientTest {
         if (!judgeUserInfoValid()) {
             return;
         }
-        String folderPrefix = "/ut_uploaddir/";
+        String folderPrefix = "ut_uploaddir/";
         File localFile1 = buildTestFile(1L);
         File localFile2 = buildTestFile(1024L);
         String key1 = folderPrefix + localFile1.getName();
@@ -209,12 +229,13 @@ public class TransferManagerTest extends AbstractCOSClientTest {
         ClientConfig srcClientConfig = new ClientConfig(new Region(srcRegion));
         COSClient srcCOSClient = new COSClient(srcCred, srcClientConfig);
         String srcBucketName = "chengwus3gz-1251668577";
-        String srcKey = "/ut_copy/len10G_1.txt";
-        String destKey = "/ut_copy_dest/len10G_1.txt";
+        String srcKey = "ut_copy/len10G_1.txt";
+        String destKey = "ut_copy_dest/len10G_1.txt";
         CopyObjectRequest copyObjectRequest = new CopyObjectRequest(new Region(srcRegion),
                 srcBucketName, srcKey, bucket, destKey);
         Copy copy = transferManager.copy(copyObjectRequest, srcCOSClient, null);
         copy.waitForCompletion();
+        clearObject(destKey);
     }
 
     // transfer manager对不同园区5G以下文件进行使用put object copy
@@ -229,12 +250,13 @@ public class TransferManagerTest extends AbstractCOSClientTest {
         ClientConfig srcClientConfig = new ClientConfig(new Region(srcRegion));
         COSClient srcCOSClient = new COSClient(srcCred, srcClientConfig);
         String srcBucketName = "chengwus3gz-1251668577";
-        String srcKey = "/ut_copy/len1G.txt";
-        String destKey = "/ut_copy_dest/len1G.txt";
+        String srcKey = "ut_copy/len1G.txt";
+        String destKey = "ut_copy_dest/len1G.txt";
         CopyObjectRequest copyObjectRequest = new CopyObjectRequest(new Region(srcRegion),
                 srcBucketName, srcKey, bucket, destKey);
         Copy copy = transferManager.copy(copyObjectRequest, srcCOSClient, null);
         copy.waitForCompletion();
+        clearObject(destKey);
     }
 
     // transfer manager对相同园区使用put object copy
@@ -249,8 +271,8 @@ public class TransferManagerTest extends AbstractCOSClientTest {
         ClientConfig srcClientConfig = new ClientConfig(new Region(srcRegion));
         COSClient srcCOSClient = new COSClient(srcCred, srcClientConfig);
         String srcBucketName = bucket;
-        String srcKey = "/ut_copy/len10G_1.txt";
-        String destKey = "/ut_copy_dest/len10G_2.txt";
+        String srcKey = "ut_copy/len10G_1.txt";
+        String destKey = "ut_copy_dest/len10G_2.txt";
         CopyObjectRequest copyObjectRequest = new CopyObjectRequest(new Region(srcRegion),
                 srcBucketName, srcKey, bucket, destKey);
         Copy copy = transferManager.copy(copyObjectRequest, srcCOSClient, null);
@@ -269,8 +291,8 @@ public class TransferManagerTest extends AbstractCOSClientTest {
         ClientConfig srcClientConfig = new ClientConfig(new Region(srcRegion));
         COSClient srcCOSClient = new COSClient(srcCred, srcClientConfig);
         String srcBucketName = bucket;
-        String srcKey = "/ut_copy/len1G.txt";
-        String destKey = "/ut_copy_dest/len1G_2.txt";
+        String srcKey = "ut_copy/len1G.txt";
+        String destKey = "ut_copy_dest/len1G_2.txt";
         CopyObjectRequest copyObjectRequest =
                 new CopyObjectRequest(srcBucketName, srcKey, bucket, destKey);
         Copy copy = transferManager.copy(copyObjectRequest, srcCOSClient, null);
