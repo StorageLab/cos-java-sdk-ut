@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.qcloud.cos.model.BucketLifecycleConfiguration;
 import com.qcloud.cos.model.DeleteBucketLifecycleConfigurationRequest;
@@ -72,8 +73,7 @@ public class PutGetLifeCycleConfigTest extends AbstractCOSClientTest {
         cosclient.deleteBucketLifecycleConfiguration(bucket);
     }
 
-    // TODO CGI这里对时间戳的校验格式有误
-    @Ignore
+    @Test
     public void testPutGetDelExpirationDateLifeCycle() throws Exception {
         List<Rule> rules = new ArrayList<>();
         Rule rule = new Rule();
@@ -87,7 +87,7 @@ public class PutGetLifeCycleConfigTest extends AbstractCOSClientTest {
         testPutGetDelRules(rules);
     }
 
-    @Ignore
+    @Test
     public void testPutGetDelLifeCycleForNormalBucket() {
         List<Rule> rules = new ArrayList<>();
 
@@ -130,7 +130,7 @@ public class PutGetLifeCycleConfigTest extends AbstractCOSClientTest {
         testPutGetDelRules(rules);
     }
 
-    @Ignore
+    @Test
     public void testPutGetDelLifeCycleForBucketWithVersions() {
         BucketVersioningConfiguration bucketVersionConfig =
                 new BucketVersioningConfiguration(BucketVersioningConfiguration.ENABLED);
@@ -138,6 +138,11 @@ public class PutGetLifeCycleConfigTest extends AbstractCOSClientTest {
                 new SetBucketVersioningConfigurationRequest(bucket, bucketVersionConfig);
         cosclient.setBucketVersioningConfiguration(setBucketVersionReq);
 
+        try {
+            Thread.sleep(10000L);
+        } catch (InterruptedException e) {
+            fail(e.toString());
+        }
         List<Rule> rules = new ArrayList<>();
 
         Rule standardIaRule = new Rule();
@@ -179,6 +184,11 @@ public class PutGetLifeCycleConfigTest extends AbstractCOSClientTest {
         SetBucketVersioningConfigurationRequest closeBucketVersionReq =
                 new SetBucketVersioningConfigurationRequest(bucket, bucketVersionConfig);
         cosclient.setBucketVersioningConfiguration(closeBucketVersionReq);
+        try {
+            Thread.sleep(10000L);
+        } catch (InterruptedException e) {
+            fail(e.toString());
+        }
     }
 
 }

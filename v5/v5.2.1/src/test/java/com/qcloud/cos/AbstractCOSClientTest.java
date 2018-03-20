@@ -7,24 +7,33 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.qcloud.cos.auth.BasicCOSCredentials;
 import com.qcloud.cos.auth.COSCredentials;
 import com.qcloud.cos.exception.CosServiceException;
+import com.qcloud.cos.internal.SkipMd5CheckStrategy;
 import com.qcloud.cos.model.AccessControlList;
+import com.qcloud.cos.model.Bucket;
+import com.qcloud.cos.model.BucketVersioningConfiguration;
 import com.qcloud.cos.model.CannedAccessControlList;
-import com.qcloud.cos.model.DeleteObjectRequest;
+import com.qcloud.cos.model.CreateBucketRequest;
 import com.qcloud.cos.model.GetObjectMetadataRequest;
 import com.qcloud.cos.model.GetObjectRequest;
+import com.qcloud.cos.model.HeadBucketRequest;
 import com.qcloud.cos.model.ObjectMetadata;
 import com.qcloud.cos.model.Permission;
 import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.PutObjectResult;
+import com.qcloud.cos.model.ResponseHeaderOverrides;
 import com.qcloud.cos.model.StorageClass;
 import com.qcloud.cos.model.UinGrantee;
 import com.qcloud.cos.region.Region;
+import com.qcloud.cos.utils.DateUtils;
 import com.qcloud.cos.utils.Md5Utils;
 
 public class AbstractCOSClientTest {
@@ -66,6 +75,19 @@ public class AbstractCOSClientTest {
         return tmpFile;
     }
 
+    protected static boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        return dir.delete();
+    }
+
     public static void initCosClient() throws Exception {
         appid = System.getenv("appid");
         secretId = System.getenv("secretId");
@@ -95,9 +117,9 @@ public class AbstractCOSClientTest {
             }
         }
 
-        if (appid == null || secretId == null || secretKey == null || bucket == null
-                || region == null) {
-            throw new Exception("UT account info missing");
+        if (secretId == null || secretKey == null || bucket == null || region == null) {
+            System.out.println("cos ut user info missing. skip all test");
+            return;
         }
         COSCredentials cred = new BasicCOSCredentials(appid, secretId, secretKey);
         clientConfig = new ClientConfig(new Region(region));
@@ -106,19 +128,54 @@ public class AbstractCOSClientTest {
         if (!tmpDir.exists()) {
             tmpDir.mkdirs();
         }
+        createBucket();
+    }
+
+    private static void createBucket() throws Exception {
+        try {
+            String bucketName = bucket;
+            CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
+            createBucketRequest.setCannedAcl(CannedAccessControlList.PublicRead);
+            Bucket createdBucket = cosclient.createBucket(createBucketRequest);
+            assertEquals(bucketName, createdBucket.getName());
+            Thread.sleep(5000L);
+            assertTrue(cosclient.doesBucketExist(bucketName));
+        } catch (CosServiceException cse) {
+            fail(cse.toString());
+        }
+    }
+
+    private static void deleteBucket() throws Exception {
+        try {
+            String bucketName = bucket;
+            cosclient.deleteBucket(bucketName);
+            // 删除bucket后, 由于server端有缓存 需要稍后查询, 这里sleep 5 秒
+            Thread.sleep(5000L);
+            assertFalse(cosclient.doesBucketExist(bucketName));
+        } catch (CosServiceException cse) {
+            fail(cse.toString());
+        }
     }
 
     public static void destoryCosClient() throws Exception {
         if (cosclient != null) {
+            deleteBucket();
             cosclient.shutdown();
         }
-        tmpDir.delete();
+        if (tmpDir != null) {
+            deleteDir(tmpDir);
+        }
+    }
+
+    protected static boolean judgeUserInfoValid() {
+        return cosclient != null;
     }
 
     // 从本地上传
-    protected static void putObjectFromLocalFile(File localFile, String key) {
-        assertNotNull(cosclient);
-        assertNotNull(bucket);
+    protected static PutObjectResult putObjectFromLocalFile(File localFile, String key) {
+        if (!judgeUserInfoValid()) {
+            return null;
+        }
 
         AccessControlList acl = new AccessControlList();
         UinGrantee uinGrantee = new UinGrantee("734000014");
@@ -137,14 +194,15 @@ public class AbstractCOSClientTest {
             fail(e.toString());
         }
         assertEquals(expectEtag, etag);
-
+        return putObjectResult;
     }
 
     // 流式上传
     protected static void putObjectFromLocalFileByInputStream(File localFile, long uploadSize,
             String uploadEtag, String key) {
-        assertNotNull(cosclient);
-        assertNotNull(bucket);
+        if (!judgeUserInfoValid()) {
+            return;
+        }
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(uploadSize);
         putObjectFromLocalFileByInputStream(localFile, uploadSize, uploadEtag, key, objectMetadata);
@@ -152,8 +210,9 @@ public class AbstractCOSClientTest {
 
     protected static void putObjectFromLocalFileByInputStream(File localFile, long uploadSize,
             String uploadEtag, String key, ObjectMetadata objectMetadata) {
-        assertNotNull(cosclient);
-        assertNotNull(bucket);
+        if (!judgeUserInfoValid()) {
+            return;
+        }
 
         FileInputStream input = null;
         try {
@@ -208,22 +267,31 @@ public class AbstractCOSClientTest {
 
     // 下载COS的object
     protected static void getObject(String key, File localDownFile) {
+        System.setProperty(SkipMd5CheckStrategy.DISABLE_GET_OBJECT_MD5_VALIDATION_PROPERTY, "true");
         GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, key);
         try {
-            cosclient.getObject(getObjectRequest, localDownFile);
+            ObjectMetadata objectMetadata = cosclient.getObject(getObjectRequest, localDownFile);
         } catch (Exception e) {
             fail(e.toString());
         }
     }
 
+    protected void checkMetaData(ObjectMetadata originMetaData, ObjectMetadata queryMetaData) {
+        Map<String, Object> originRawMeta = originMetaData.getRawMetadata();
+        Map<String, Object> queryRawMeta = queryMetaData.getRawMetadata();
+        for (Entry<String, Object> entry : originRawMeta.entrySet()) {
+            assertTrue(queryRawMeta.containsKey(entry.getKey()));
+            assertEquals(entry.getValue(), queryRawMeta.get(entry.getKey()));
+        }
+    }
 
     // 删除COS上的object
     protected static void clearObject(String key) {
-        assertNotNull(cosclient);
-        assertNotNull(bucket);
+        if (!judgeUserInfoValid()) {
+            return;
+        }
 
         cosclient.deleteObject(bucket, key);
-
         assertFalse(cosclient.doesObjectExist(bucket, key));
     }
 }
