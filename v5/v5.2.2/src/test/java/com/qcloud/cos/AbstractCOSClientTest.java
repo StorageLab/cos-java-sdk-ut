@@ -269,25 +269,8 @@ public class AbstractCOSClientTest {
     protected static void getObject(String key, File localDownFile) {
         System.setProperty(SkipMd5CheckStrategy.DISABLE_GET_OBJECT_MD5_VALIDATION_PROPERTY, "true");
         GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, key);
-        ResponseHeaderOverrides responseHeaders = new ResponseHeaderOverrides();
-        String responseContentType = "image/x-icon";
-        String responseContentLanguage = "zh-CN";
-        String responseContentDispositon = "filename=\"abc.txt\"";
-        String responseCacheControl = "no-cache";
-        String expireStr =
-                DateUtils.formatRFC822Date(new Date(System.currentTimeMillis() + 24 * 3600 * 1000));
-        responseHeaders.setContentType(responseContentType);
-        responseHeaders.setContentLanguage(responseContentLanguage);
-        responseHeaders.setContentDisposition(responseContentDispositon);
-        responseHeaders.setCacheControl(responseCacheControl);
-        responseHeaders.setExpires(expireStr);
-
-        getObjectRequest.setResponseHeaders(responseHeaders);
         try {
             ObjectMetadata objectMetadata = cosclient.getObject(getObjectRequest, localDownFile);
-            assertEquals(responseContentType, objectMetadata.getContentType());
-            assertEquals(responseContentDispositon, objectMetadata.getContentDisposition());
-            assertEquals(responseCacheControl, objectMetadata.getCacheControl());
         } catch (Exception e) {
             fail(e.toString());
         }
