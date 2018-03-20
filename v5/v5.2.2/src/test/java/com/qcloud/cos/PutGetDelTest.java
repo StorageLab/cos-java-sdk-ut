@@ -104,15 +104,6 @@ public class PutGetDelTest extends AbstractCOSClientTest {
         }
     }
 
-    private void checkMetaData(ObjectMetadata originMetaData, ObjectMetadata queryMetaData) {
-        Map<String, Object> originRawMeta = originMetaData.getRawMetadata();
-        Map<String, Object> queryRawMeta = queryMetaData.getRawMetadata();
-        for (Entry<String, Object> entry : originRawMeta.entrySet()) {
-            assertTrue(queryRawMeta.containsKey(entry.getKey()));
-            assertEquals(entry.getValue(), queryRawMeta.get(entry.getKey()));
-        }
-    }
-
     public void testPutObjectByTruncateDiffSize(long originSize, long truncateSize)
             throws IOException {
         File localFile = buildTestFile(originSize);
