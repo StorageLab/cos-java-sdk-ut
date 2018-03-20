@@ -44,7 +44,7 @@ public class TransferManagerTest extends AbstractCOSClientTest {
         TransferManager transferManager = new TransferManager(cosclient);
         File localFile = buildTestFile(1024 * 1024 * 2L);
         File downFile = new File(localFile.getAbsolutePath() + ".down");
-        String key = "/ut/" + localFile.getName();
+        String key = "ut/" + localFile.getName();
         try {
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, key, localFile);
             Upload upload = transferManager.upload(putObjectRequest);
@@ -77,7 +77,7 @@ public class TransferManagerTest extends AbstractCOSClientTest {
         TransferManager transferManager = new TransferManager(cosclient);
         File localFile = buildTestFile(1024 * 1024 * 10L);
         File downFile = new File(localFile.getAbsolutePath() + ".down");
-        String key = "/ut/" + localFile.getName();
+        String key = "ut/" + localFile.getName();
         try {
             PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, key, localFile);
             Upload upload = transferManager.upload(putObjectRequest);
@@ -103,7 +103,7 @@ public class TransferManagerTest extends AbstractCOSClientTest {
     @Test
     public void testTransferManagerUploadLocalDir()
             throws IOException, CosServiceException, CosClientException, InterruptedException {
-        String folderPrefix = "/ut_uploaddir/";
+        String folderPrefix = "ut_uploaddir/";
         File localFile1 = buildTestFile(1L);
         File localFile2 = buildTestFile(1024L);
         String key1 = folderPrefix + localFile1.getName();
@@ -129,7 +129,7 @@ public class TransferManagerTest extends AbstractCOSClientTest {
     @Test
     public void testTransferManagerUploadDownloadDir()
             throws IOException, CosServiceException, CosClientException, InterruptedException {
-        String folderPrefix = "/ut_uploaddir/";
+        String folderPrefix = "ut_uploaddir/";
         File localFile1 = buildTestFile(1L);
         File localFile2 = buildTestFile(1024L);
         String key1 = folderPrefix + localFile1.getName();

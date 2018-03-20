@@ -38,7 +38,7 @@ public class PutGetDelTest extends AbstractCOSClientTest {
     private void testPutGetDelObjectDiffSize(long size) throws CosServiceException, IOException {
         File localFile = buildTestFile(size);
         File downLoadFile = new File(localFile.getAbsolutePath() + ".down");
-        String key = "/ut/" + localFile.getName();
+        String key = "ut/" + localFile.getName();
         testPutGetObjectAndClear(key, localFile, downLoadFile);
     }
 
@@ -76,7 +76,7 @@ public class PutGetDelTest extends AbstractCOSClientTest {
             throws IOException {
         File localFile = buildTestFile(size);
         File downLoadFile = new File(localFile.getAbsolutePath() + ".down");
-        String key = "/ut/" + localFile.getName();
+        String key = "ut/" + localFile.getName();
         originMetaData.setContentLength(size);
         try {
             // put object
@@ -117,7 +117,7 @@ public class PutGetDelTest extends AbstractCOSClientTest {
             throws IOException {
         File localFile = buildTestFile(originSize);
         File downLoadFile = new File(localFile.getAbsolutePath() + ".down");
-        String key = "/ut/" + localFile.getName();
+        String key = "ut/" + localFile.getName();
         try {
             byte[] partByte = getFilePartByte(localFile, 0, new Long(truncateSize).intValue());
             String uploadEtag = Md5Utils.md5Hex(partByte);
@@ -176,7 +176,7 @@ public class PutGetDelTest extends AbstractCOSClientTest {
     public void testPutGetDelObjectNameContainChinese() throws IOException {
         File localFile = buildTestFile(1L);
         File downLoadFile = new File(localFile.getAbsolutePath() + ".down");
-        String key = "/ut/" + "abc我的文件.txt";
+        String key = "ut/" + "abc我的文件.txt";
         testPutGetObjectAndClear(key, localFile, downLoadFile);
     }
 
