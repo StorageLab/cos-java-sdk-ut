@@ -286,7 +286,6 @@ public class AbstractCOSClientTest {
         try {
             ObjectMetadata objectMetadata = cosclient.getObject(getObjectRequest, localDownFile);
             assertEquals(responseContentType, objectMetadata.getContentType());
-            assertEquals(responseContentLanguage, objectMetadata.getContentLanguage());
             assertEquals(responseContentDispositon, objectMetadata.getContentDisposition());
             assertEquals(responseCacheControl, objectMetadata.getCacheControl());
         } catch (Exception e) {
