@@ -39,7 +39,7 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
             return;
         }
         try {
-            String bucketName = "java-pubr";
+            String bucketName = "javapubr";
             CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
             createBucketRequest.setCannedAcl(CannedAccessControlList.PublicRead);
             Bucket bucket = cosclient.createBucket(createBucketRequest);
@@ -67,7 +67,7 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
             return;
         }
         try {
-            String bucketName = "java-pubrw";
+            String bucketName = "javapubrw";
             CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
             createBucketRequest.setCannedAcl(CannedAccessControlList.PublicReadWrite);
             AccessControlList accessControlList = new AccessControlList();
@@ -99,7 +99,7 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
             return;
         }
         try {
-            String bucketName = "java-pri";
+            String bucketName = "javapri";
             CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
             createBucketRequest.setCannedAcl(CannedAccessControlList.Private);
             Bucket bucket = cosclient.createBucket(createBucketRequest);
