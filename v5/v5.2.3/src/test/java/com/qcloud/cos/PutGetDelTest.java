@@ -41,7 +41,7 @@ public class PutGetDelTest extends AbstractCOSClientTest {
         }
         File localFile = buildTestFile(size);
         File downLoadFile = new File(localFile.getAbsolutePath() + ".down");
-        String key = "/ut/" + localFile.getName();
+        String key = "ut/" + localFile.getName();
         testPutGetObjectAndClear(key, localFile, downLoadFile);
     }
 
@@ -89,7 +89,7 @@ public class PutGetDelTest extends AbstractCOSClientTest {
         }
         File localFile = buildTestFile(size);
         File downLoadFile = new File(localFile.getAbsolutePath() + ".down");
-        String key = "/ut/" + localFile.getName();
+        String key = "ut/" + localFile.getName();
         originMetaData.setContentLength(size);
         try {
             // put object
@@ -117,15 +117,6 @@ public class PutGetDelTest extends AbstractCOSClientTest {
         }
     }
 
-    private void checkMetaData(ObjectMetadata originMetaData, ObjectMetadata queryMetaData) {
-        Map<String, Object> originRawMeta = originMetaData.getRawMetadata();
-        Map<String, Object> queryRawMeta = queryMetaData.getRawMetadata();
-        for (Entry<String, Object> entry : originRawMeta.entrySet()) {
-            assertTrue(queryRawMeta.containsKey(entry.getKey()));
-            assertEquals(entry.getValue(), queryRawMeta.get(entry.getKey()));
-        }
-    }
-
     public void testPutObjectByTruncateDiffSize(long originSize, long truncateSize)
             throws IOException {
         if (!judgeUserInfoValid()) {
@@ -133,7 +124,7 @@ public class PutGetDelTest extends AbstractCOSClientTest {
         }
         File localFile = buildTestFile(originSize);
         File downLoadFile = new File(localFile.getAbsolutePath() + ".down");
-        String key = "/ut/" + localFile.getName();
+        String key = "ut/" + localFile.getName();
         try {
             byte[] partByte = getFilePartByte(localFile, 0, new Long(truncateSize).intValue());
             String uploadEtag = Md5Utils.md5Hex(partByte);
@@ -195,7 +186,7 @@ public class PutGetDelTest extends AbstractCOSClientTest {
         }
         File localFile = buildTestFile(1L);
         File downLoadFile = new File(localFile.getAbsolutePath() + ".down");
-        String key = "/ut/" + "测试文件.png";
+        String key = "ut/" + "测试文件.png";
         testPutGetObjectAndClear(key, localFile, downLoadFile);
     }
 

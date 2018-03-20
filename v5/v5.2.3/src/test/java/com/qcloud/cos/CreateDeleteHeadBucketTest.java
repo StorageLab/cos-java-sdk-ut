@@ -136,7 +136,7 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
         }
     }
     
-    @Test
+    @Ignore
     public void testCreateBucketWithNameStartWithDelimiter() throws Exception {
         if (!judgeUserInfoValid()) {
             return;

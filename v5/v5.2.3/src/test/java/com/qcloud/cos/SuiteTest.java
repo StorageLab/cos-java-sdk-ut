@@ -9,6 +9,6 @@ import org.junit.runners.Suite.SuiteClasses;
         CORSTest.class, CreateDeleteHeadBucketTest.class, GeneratePresignedUrlTest.class,
         GetBucketLocationTest.class, GetServiceTest.class, ListObjectTest.class, MultipartUploadTest.class,
         PutGetDelTest.class, PutObjectCopyTest.class})
-    /** Ignore AclTest.class, PutGetLifeCycleConfigTest.class **/
+    /** ignore AclTest.class, PutGetLifeCycleConfigTest.class **/
 public class SuiteTest {
 }
