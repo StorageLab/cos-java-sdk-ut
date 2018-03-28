@@ -53,6 +53,7 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
             assertEquals(BucketVersioningConfiguration.OFF,
                     bucketVersioningConfiguration.getStatus());
 
+            Thread.sleep(5000L);
             cosclient.deleteBucket(bucketName);
             // 删除bucket后, 由于server端有缓存 需要稍后查询, 这里sleep 5 秒
             Thread.sleep(5000L);
@@ -85,6 +86,7 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
             assertEquals(BucketVersioningConfiguration.OFF,
                     bucketVersioningConfiguration.getStatus());
 
+            Thread.sleep(5000L);
             cosclient.deleteBucket(bucketName);
             // 删除bucket后, 由于server端有缓存 需要稍后查询, 这里sleep 5 秒
             Thread.sleep(5000L);
@@ -113,6 +115,7 @@ public class CreateDeleteHeadBucketTest extends AbstractCOSClientTest {
             assertEquals(BucketVersioningConfiguration.OFF,
                     bucketVersioningConfiguration.getStatus());
 
+            Thread.sleep(5000L);
             cosclient.deleteBucket(bucketName);
             // 删除bucket后, 由于server端有缓存 需要稍后查询, 这里sleep 5 秒
             Thread.sleep(5000L);
