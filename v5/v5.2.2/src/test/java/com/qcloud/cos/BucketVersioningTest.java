@@ -1,6 +1,7 @@
 package com.qcloud.cos;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -23,10 +24,19 @@ public class BucketVersioningTest extends AbstractCOSClientTest {
 
     @Test
     public void testBucketVersioningEnabled() {
+        if (!judgeUserInfoValid()) {
+            return;
+        }
         BucketVersioningConfiguration bucketVersioningEnabled =
                 new BucketVersioningConfiguration(BucketVersioningConfiguration.ENABLED);
         cosclient.setBucketVersioningConfiguration(
                 new SetBucketVersioningConfigurationRequest(bucket, bucketVersioningEnabled));
+        
+        try {
+            Thread.sleep(5000L);
+        } catch (InterruptedException e) {
+            fail(e.toString());
+        }
 
         BucketVersioningConfiguration bucketVersioningRet =
                 cosclient.getBucketVersioningConfiguration(bucket);
@@ -35,10 +45,19 @@ public class BucketVersioningTest extends AbstractCOSClientTest {
 
     @Test
     public void testBucketVersioningSuspended() {
+        if (!judgeUserInfoValid()) {
+            return;
+        }
         BucketVersioningConfiguration bucketVersioningEnabled =
                 new BucketVersioningConfiguration(BucketVersioningConfiguration.SUSPENDED);
         cosclient.setBucketVersioningConfiguration(
                 new SetBucketVersioningConfigurationRequest(bucket, bucketVersioningEnabled));
+        
+        try {
+            Thread.sleep(5000L);
+        } catch (InterruptedException e) {
+            fail(e.toString());
+        }
 
         BucketVersioningConfiguration bucketVersioningRet =
                 cosclient.getBucketVersioningConfiguration(bucket);
