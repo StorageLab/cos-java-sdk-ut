@@ -34,12 +34,18 @@ public class BucketReplicationTest extends AbstractCOSClientTest {
                 new BucketVersioningConfiguration(BucketVersioningConfiguration.ENABLED);
         cosclient.setBucketVersioningConfiguration(
                 new SetBucketVersioningConfigurationRequest(bucket, bucketVersioningEnabled));
+				
+        try {
+            Thread.sleep(5000L);
+        } catch (InterruptedException e) {
+            fail(e.toString());
+        }
 
         ReplicationRule replicationRule = new ReplicationRule();
         String prefix = "copy1_folder/";
         replicationRule.setPrefix(prefix);
         replicationRule.setStatus(ReplicationRuleStatus.Enabled);
-
+        
         ReplicationDestinationConfig replicationDestinationConfig =
                 new ReplicationDestinationConfig();
         String bucketQCS = "qcs:id/0:cos:ap-guangzhou:appid/1251668577:chengwus3gz";
@@ -56,7 +62,7 @@ public class BucketReplicationTest extends AbstractCOSClientTest {
 
         // replication设置后, 立刻获取会需要一段时间
         try {
-            Thread.sleep(3000L);
+            Thread.sleep(5000L);
         } catch (InterruptedException e) {
             fail(e.toString());
         }

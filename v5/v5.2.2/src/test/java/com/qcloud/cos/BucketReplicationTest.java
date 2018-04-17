@@ -36,6 +36,13 @@ public class BucketReplicationTest extends AbstractCOSClientTest {
         String prefix = "copy1_folder/";
         replicationRule.setPrefix(prefix);
         replicationRule.setStatus(ReplicationRuleStatus.Enabled);
+		
+        try {
+            Thread.sleep(5000L);
+        } catch (InterruptedException e) {
+            fail(e.toString());
+        }
+        
 
         ReplicationDestinationConfig replicationDestinationConfig =
                 new ReplicationDestinationConfig();
@@ -53,7 +60,7 @@ public class BucketReplicationTest extends AbstractCOSClientTest {
 
         // replication设置后, 立刻获取会需要一段时间
         try {
-            Thread.sleep(10000L);
+            Thread.sleep(5000L);
         } catch (InterruptedException e) {
             fail(e.toString());
         }
