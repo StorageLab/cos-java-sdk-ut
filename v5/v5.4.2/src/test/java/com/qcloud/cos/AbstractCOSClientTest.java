@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
@@ -17,6 +18,7 @@ import com.qcloud.cos.auth.BasicCOSCredentials;
 import com.qcloud.cos.auth.COSCredentials;
 import com.qcloud.cos.exception.CosServiceException;
 import com.qcloud.cos.internal.SkipMd5CheckStrategy;
+import com.qcloud.cos.model.AbortMultipartUploadRequest;
 import com.qcloud.cos.model.AccessControlList;
 import com.qcloud.cos.model.Bucket;
 import com.qcloud.cos.model.BucketVersioningConfiguration;
@@ -25,6 +27,9 @@ import com.qcloud.cos.model.CreateBucketRequest;
 import com.qcloud.cos.model.GetObjectMetadataRequest;
 import com.qcloud.cos.model.GetObjectRequest;
 import com.qcloud.cos.model.HeadBucketRequest;
+import com.qcloud.cos.model.ListMultipartUploadsRequest;
+import com.qcloud.cos.model.MultipartUpload;
+import com.qcloud.cos.model.MultipartUploadListing;
 import com.qcloud.cos.model.ObjectMetadata;
 import com.qcloud.cos.model.Permission;
 import com.qcloud.cos.model.PutObjectRequest;
@@ -144,9 +149,36 @@ public class AbstractCOSClientTest {
             fail(cse.toString());
         }
     }
+    
+    private static void abortAllNotFinishedMultipartUpload() throws Exception {
+        ListMultipartUploadsRequest listMultipartUploadsRequest =
+                new ListMultipartUploadsRequest(bucket);
+        MultipartUploadListing multipartUploadListing = null;
+        while (true) {
+            multipartUploadListing = cosclient.listMultipartUploads(listMultipartUploadsRequest);
+            List<MultipartUpload> multipartUploads = multipartUploadListing.getMultipartUploads();
+            for (MultipartUpload mUpload : multipartUploads) {
+                String key = mUpload.getKey();
+                String uploadId = mUpload.getUploadId();
+                cosclient.abortMultipartUpload(
+                        new AbortMultipartUploadRequest(bucket, key, uploadId));
+            }
+            if (!multipartUploadListing.isTruncated()) {
+                break;
+            }
+            listMultipartUploadsRequest.setKeyMarker(multipartUploadListing.getNextKeyMarker());
+            listMultipartUploadsRequest
+                    .setUploadIdMarker(multipartUploadListing.getNextUploadIdMarker());
+        }
+    }
+    
+    private static void clearBucket() throws Exception {
+        abortAllNotFinishedMultipartUpload();
+    }
 
     private static void deleteBucket() throws Exception {
         try {
+            clearBucket();
             String bucketName = bucket;
             cosclient.deleteBucket(bucketName);
             // 删除bucket后, 由于server端有缓存 需要稍后查询, 这里sleep 5 秒
