@@ -127,6 +127,8 @@ public class AbstractCOSClientTest {
         }
         COSCredentials cred = new BasicCOSCredentials(secretId, secretKey);
         clientConfig = new ClientConfig(new Region(region));
+        clientConfig.setHttpProxyIp("10.14.36.84");
+        clientConfig.setHttpProxyPort(8080);
         cosclient = new COSClient(cred, clientConfig);
         tmpDir = new File("ut_test_tmp_data");
         if (!tmpDir.exists()) {
@@ -148,7 +150,7 @@ public class AbstractCOSClientTest {
             fail(cse.toString());
         }
     }
-	
+
     private static void abortAllNotFinishedMultipartUpload() throws Exception {
         ListMultipartUploadsRequest listMultipartUploadsRequest =
                 new ListMultipartUploadsRequest(bucket);
@@ -173,11 +175,11 @@ public class AbstractCOSClientTest {
 
     private static void clearBucket() throws Exception {
         abortAllNotFinishedMultipartUpload();
-    }	
+    }
 
     private static void deleteBucket() throws Exception {
         try {
-			clearBucket();
+            clearBucket();
             String bucketName = bucket;
             cosclient.deleteBucket(bucketName);
             // 删除bucket后, 由于server端有缓存 需要稍后查询, 这里sleep 5 秒
@@ -230,7 +232,7 @@ public class AbstractCOSClientTest {
 
     // 流式上传
     protected static void putObjectFromLocalFileByInputStream(File localFile, long uploadSize,
-            String uploadEtag, String key) {
+                                                              String uploadEtag, String key) {
         if (!judgeUserInfoValid()) {
             return;
         }
@@ -240,7 +242,7 @@ public class AbstractCOSClientTest {
     }
 
     protected static void putObjectFromLocalFileByInputStream(File localFile, long uploadSize,
-            String uploadEtag, String key, ObjectMetadata objectMetadata) {
+                                                              String uploadEtag, String key, ObjectMetadata objectMetadata) {
         if (!judgeUserInfoValid()) {
             return;
         }
@@ -268,9 +270,8 @@ public class AbstractCOSClientTest {
     }
 
 
-
     protected static ObjectMetadata headSimpleObject(String key, long expectedLength,
-            String expectedEtag) {
+                                                     String expectedEtag) {
         ObjectMetadata objectMetadata =
                 cosclient.getObjectMetadata(new GetObjectMetadataRequest(bucket, key));
         assertEquals(expectedLength, objectMetadata.getContentLength());
@@ -280,7 +281,7 @@ public class AbstractCOSClientTest {
     }
 
     protected static ObjectMetadata headMultiPartObject(String key, long expectedLength,
-            int expectedPartNum) {
+                                                        int expectedPartNum) {
         ObjectMetadata objectMetadata =
                 cosclient.getObjectMetadata(new GetObjectMetadataRequest(bucket, key));
         assertEquals(expectedLength, objectMetadata.getContentLength());

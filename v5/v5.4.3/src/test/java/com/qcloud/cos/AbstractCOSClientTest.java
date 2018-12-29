@@ -169,12 +169,16 @@ public class AbstractCOSClientTest {
     protected static void initNormalCOSClient() {
         COSCredentials cred = new BasicCOSCredentials(secretId, secretKey);
         clientConfig = new ClientConfig(new Region(region));
+        clientConfig.setHttpProxyIp("10.14.36.84");
+        clientConfig.setHttpProxyPort(8080);
         cosclient = new COSClient(cred, clientConfig);
     }
 
     protected static void initEncryptionClient() {
         COSCredentials cred = new BasicCOSCredentials(secretId, secretKey);
         clientConfig = new ClientConfig(new Region(region));
+        clientConfig.setHttpProxyIp("10.14.36.84");
+        clientConfig.setHttpProxyPort(8080);
         cosclient = new COSEncryptionClient(qcloudkms, new COSStaticCredentialsProvider(cred),
                 new StaticEncryptionMaterialsProvider(encryptionMaterials), clientConfig,
                 cryptoConfiguration);

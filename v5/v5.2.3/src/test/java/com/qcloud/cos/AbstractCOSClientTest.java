@@ -127,6 +127,8 @@ public class AbstractCOSClientTest {
         }
         COSCredentials cred = new BasicCOSCredentials(secretId, secretKey);
         clientConfig = new ClientConfig(new Region(region));
+        clientConfig.setHttpProxyIp("10.14.36.84");
+        clientConfig.setHttpProxyPort(8080);
         cosclient = new COSClient(cred, clientConfig);
         tmpDir = new File("ut_test_tmp_data");
         if (!tmpDir.exists()) {
